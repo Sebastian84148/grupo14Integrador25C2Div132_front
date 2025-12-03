@@ -7,6 +7,7 @@ let barraBusqueda = document.getElementById("barra-busqueda");
 
 //Variables
 const API_URL = "http://localhost:3000/api/productos/activos";
+const API_VENTAS = "http://localhost:3000/api/ventas";
 let carrito = [];
 let productosDisponibles = [];
 
@@ -189,8 +190,117 @@ function vaciarCarrito() {
     guardarYRenerizarCarrito();
 }
 
-function finalizarCompra() {
-    console.log("Finalizando compra..."); 
+async function finalizarCompra() {
+    console.table(carrito);
+
+    if(carrito.length === 0) {
+        return alert("El carrito esta vacio");
+    }
+
+    const usuarioCliente = sessionStorage.getItem("usuarioCliente");
+
+    const precioTotal = carrito.reduce((total, prod) => total + (prod.precio * prod.cantidad), 0);
+
+    let idProductos = [];
+
+    carrito.forEach(prod => idProductos.push(prod.id));
+
+    try {
+        const ventaExitosa = await registrarVenta(precioTotal, idProductos, usuarioCliente);
+
+        if(ventaExitosa) {
+            imprimirTicket(usuarioCliente, precioTotal);
+
+            alert("¡Compra realizada con éxito! Tu ticket se está descargando.");
+
+            sessionStorage.removeItem("carrito");
+            sessionStorage.removeItem("usuarioCliente");
+
+            location.href = "login.html"
+        }
+    } catch (error) {
+        console.error("Error en el proceso de compra:", error);
+        alert("Hubo un error al procesar tu compra. Por favor intenta de nuevo.");
+    }
+}
+
+async function registrarVenta(precioTotal, idProductos, nombreCliente) {
+    const fecha = new Date()
+    .toLocaleString("sv-SE", { hour12: false })  
+    .replace("T", " ");
+
+    const data = {
+        date: fecha,
+        total_price: precioTotal,
+        user_name: nombreCliente,
+        products: idProductos
+    }
+
+    try {
+        const response  = await fetch(API_VENTAS, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+
+        const resultado = await response.json();
+
+        if(response.ok) {
+            alert("Venta creada con exito");
+        
+            return true;
+        } else {
+            console.error("Error del servidor:", resultado.message);
+            alert("Error al registrar venta: " + resultado.message);
+
+            return false;
+        }
+    } catch (error) {
+        console.error("Error de red:", error);
+
+        return false;
+    }
+}
+
+function imprimirTicket(usuarioCliente, precioTotal) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    let y = 20;
+
+    doc.setFontSize(18);
+    doc.text("Ticket de compra:", 20, y);
+    y += 15;
+
+    doc.setFontSize(12);
+    doc.text(`Cliente: ${usuarioCliente}`, 20, y);
+    doc.text(`Fecha: ${new Date().toLocaleDateString()}`, 150, y);
+    y += 15;
+
+    doc.text("Producto", 20, y);
+    doc.text("Cant.", 120, y);
+    doc.text("Precio", 150, y);
+    doc.line(20, y + 2, 190, y + 2);
+    y += 10;
+
+    carrito.forEach(prod => {
+        const nombreRecortado = prod.nombre.length > 40 ? prod.nombre.substring(0, 40) + "..." : prod.nombre;
+        doc.text(nombreRecortado, 20, y);
+        doc.text(prod.cantidad.toString(), 125, y);
+        doc.text(`$${prod.precio * prod.cantidad}`, 150, y);
+        y += 10;
+    });
+
+    y += 5;
+    doc.line(20, y, 190, y);
+    y += 10;
+    doc.setFontSize(14);
+    doc.text(`Total: $${precioTotal}`, 120, y);
+
+    // Guardar
+    doc.save(`ticket_${Date.now()}.pdf`);
 }
 
 barraBusqueda.addEventListener("keyup", filtrarProductos)
