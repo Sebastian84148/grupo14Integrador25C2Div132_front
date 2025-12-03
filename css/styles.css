@@ -1,0 +1,113 @@
+/*================
+Estilos generales
+=================*/
+body, h3 , p, .contenedor-carrito{
+    margin: 0;
+    font-family: sans-serif;
+}
+
+#barra-busqueda, .boton {
+    border: 0;
+    border-radius: 5px;
+    padding: 8px;
+}
+
+.nav-fruteria, .boton {
+    color: white;
+    background-color: green;
+}
+
+.boton-eliminar {
+    background-color: red;
+}
+
+
+
+/*================
+        Nav
+=================*/
+.nav-fruteria {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 15px;
+}
+
+.contenedor-alumno {
+    display: flex;
+    gap: 25px;
+    align-items: center;
+}
+
+
+/*================
+   Seccion Frutas
+=================*/
+#seccion-frutas {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.contenedor-titulo {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 15px;
+}
+
+.contenedor-frutas {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 0 50px;
+}
+
+.card-producto {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid rgb(219, 217, 217);
+    border-radius: 5px;
+    padding: 15px 25px;
+}
+
+.card-producto img {
+    width: 50px;
+    height: 50px;
+}
+
+
+
+/*================
+  Seccion Carrito
+=================*/
+#seccion-carrito {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgba(231, 230, 230, 0.568);
+    padding: 15px;
+}
+
+.contenedor-carrito {
+    width: 100%;
+    padding: 0;
+}
+
+.bloque-item {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    padding: 5px;
+}
+
+.bloque-total {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
