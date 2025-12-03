@@ -12,7 +12,7 @@ body, h3 , p, .contenedor-carrito{
     padding: 8px;
 }
 
-.nav-fruteria, .boton {
+.nav-productos, .boton {
     color: white;
     background-color: green;
 }
@@ -26,14 +26,14 @@ body, h3 , p, .contenedor-carrito{
 /*================
         Nav
 =================*/
-.nav-fruteria {
+.nav-productos {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 5px 15px;
 }
 
-.contenedor-alumno {
+.contenedor-cliente {
     display: flex;
     gap: 25px;
     align-items: center;
@@ -43,7 +43,7 @@ body, h3 , p, .contenedor-carrito{
 /*================
    Seccion Frutas
 =================*/
-#seccion-frutas {
+#seccion-productos {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -57,7 +57,7 @@ body, h3 , p, .contenedor-carrito{
     margin-bottom: 15px;
 }
 
-.contenedor-frutas {
+.contenedor-productos {
     display: flex;
     justify-content: center;
     align-items: center;

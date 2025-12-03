@@ -1,27 +1,30 @@
-const API_URL = "http://localhost:3000/api/productos/activos";
-
 //Seleccion de etiquetas html
+let seccionProductos = document.getElementById("seccion-productos");
 let seccionCarrito = document.getElementById("seccion-carrito");
 let cantidadCarrito = document.getElementById("cantidad-carrito");
+let barraBusqueda = document.getElementById("barra-busqueda");
 
-// //Variables
-// let nombreAlumno = document.getElementById("nombre-alumno");
-// let barraBusqueda = document.getElementById("barra-busqueda");
-
-let carrito = sessionStorage.getItem("carrito");
-
-if(carrito !== null) {
-    carrito = JSON.parse(carrito);
-}
-else {
-    carrito = [];
-}
-
-// //Selecciono las etiquetas del html
-let seccionFrutas = document.getElementById("seccion-frutas");
 
 //Variables
+const API_URL = "http://localhost:3000/api/productos/activos";
+let carrito = [];
 let productosDisponibles = [];
+
+
+//Funciones
+function verificarLogin() {
+    let usuarioCliente = sessionStorage.getItem("usuarioCliente");
+    
+    if(!usuarioCliente) {
+        location.href = "login.html";
+    }
+
+    let nombreCliente = document.getElementById("nombre-cliente");
+    
+    nombreCliente.textContent = `Bienvenido ${usuarioCliente}`;
+
+    obtenerProductos();
+}
 
 async function obtenerProductos() {
     try {
@@ -34,7 +37,7 @@ async function obtenerProductos() {
             mostrarProductos(productosDisponibles);
 
         } else {
-            alert(resultado.error);
+            alert(resultado.message);
         }
     } catch (error) {
         console.error("Error:", error);
@@ -44,7 +47,7 @@ async function obtenerProductos() {
 function mostrarProductos(array) {
     let cartaProducto = `
             <div>
-                <h3>Nuestras Frutas</h3>
+                <h3>Nuestros Productos</h3>
             </div>
             <div class="contenedor-titulo">
                 <button class="boton" onclick="ordenarPorCriterio('nombre')">Ordenar por nombre</button>
@@ -52,10 +55,9 @@ function mostrarProductos(array) {
             </div>
     `;
 
-    cartaProducto += "<div class='contenedor-frutas'>";
+    cartaProducto += "<div class='contenedor-productos'>";
 
     array.forEach(fru => {
-        console.log(fru.id)
         cartaProducto += `
             <div class="card-producto">
                 <img src="${fru.img_url}" alt="${fru.nombre}">
@@ -68,7 +70,18 @@ function mostrarProductos(array) {
 
     cartaProducto += "</div>";
 
-    seccionFrutas.innerHTML = cartaProducto;
+    seccionProductos.innerHTML = cartaProducto;
+}
+
+function ordenarPorCriterio(criterio) {
+    if (criterio === 'precio') {
+        productosDisponibles.sort((a, b) => a.precio - b.precio);
+
+    } else if (criterio === 'nombre') {
+        productosDisponibles.sort((a, b) => a.nombre.localeCompare(b.nombre));
+    }
+
+    mostrarProductos(productosDisponibles);
 }
 
 function agregarACarrito(id) {
@@ -176,59 +189,20 @@ function vaciarCarrito() {
     guardarYRenerizarCarrito();
 }
 
+function finalizarCompra() {
+    console.log("Finalizando compra..."); 
+}
 
+barraBusqueda.addEventListener("keyup", filtrarProductos)
 
+function filtrarProductos() {
+    let productosFiltrados = productosDisponibles.filter(prod => prod.nombre.toLowerCase().includes(barraBusqueda.value));
 
-
-
-// function imprimirDatosAlumno() {
-//     const alumno = {dni: 44503351, nombre: "Sebastian", apellido: "Peña"};
-
-//     for(let propiedad in alumno) {
-//         console.log(`${propiedad}: ${alumno[propiedad]}`);
-//     }
-
-//     nombreAlumno.textContent = `${alumno.nombre} ${alumno.apellido}`;
-// }
-
-
-// barraBusqueda.addEventListener("keyup", filtrarProductos)
-
-
-// function filtrarProductos() {
-//     let productosFiltrados = frutas.filter(fru => fru.nombre.includes(barraBusqueda.value));
-
-//     mostrarProductos(productosFiltrados);
-// }
-
-
-
-
-// function ordenarPorCriterio(propiedad) {
-//     for(let i = 0; i < frutas.length - 1; i++) {
-//         let minFruta = i;
-
-//         for(let j = i + 1; j < frutas.length; j++) {
-//             if(frutas[j][propiedad] < frutas[minFruta][propiedad]) {
-//                 minFruta = j;
-                
-//             }
-//         }
-
-//         let aux = frutas[i];
-//         frutas[i] = frutas[minFruta]
-//         frutas[minFruta] = aux;
-//     }
-
-//     mostrarProductos(frutas);
-// }
-
-
-
-
+    mostrarProductos(productosFiltrados);
+}
 
 function init() {
-    obtenerProductos();
+    verificarLogin();
 }
 
 init();
