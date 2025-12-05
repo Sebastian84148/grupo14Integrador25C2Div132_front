@@ -3,25 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Tecno Store</title>
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" href="img/favicon.ico" type="image/x-icon">
     <script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
 </head>
 <body>
     <header>
-        <nav class="nav-productos">
-            <h3>Tecno Store</h3>
-            <div class="contenedor-cliente">
-                <p id="nombre-cliente"></p>
+        <nav class="navBar">
+            <div class="contenedor-logo">
+                <img src="img/logo.png" alt="logo">
+                <h3>Tecno Store</h3>
+            </div>
+
+            <div class="contenedor-usuario">
+                <span id="nombre-cliente"></span>
                 <label for="barra-busqueda"></label>
-                <input type="text" id="barra-busqueda" placeholder="Buscar...">
+                <input type="text" id="barra-busqueda" class="input-busqueda" placeholder="Buscar producto...">
+                <p id="cantidad-carrito">Cantidad: 0 productos</p>
             </div>
             
-            <p id="cantidad-carrito">Carrito: 0 Productos</p>
         </nav>
     </header>
-    <main>
+    <main class="contenedor-main">
         <section id="seccion-productos"></section>
+
+        <hr class="separador">
+
         <section id="seccion-carrito"></section>
     </main>
     <script src="js/main.js"></script>

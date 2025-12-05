@@ -8,6 +8,7 @@ let barraBusqueda = document.getElementById("barra-busqueda");
 //Variables
 const API_URL = "http://localhost:3000/api/productos/activos";
 const API_VENTAS = "http://localhost:3000/api/ventas";
+const IMG_URL = "http://localhost:3000/img/";
 let carrito = [];
 let productosDisponibles = [];
 
@@ -45,27 +46,32 @@ async function obtenerProductos() {
     }
 }
 
-function mostrarProductos(array) {
+function mostrarProductos(productos) {
     let cartaProducto = `
-            <div>
-                <h3>Nuestros Productos</h3>
-            </div>
-            <div class="contenedor-titulo">
-                <button class="boton" onclick="ordenarPorCriterio('nombre')">Ordenar por nombre</button>
-                <button class="boton" onclick="ordenarPorCriterio('precio')">Ordenar por precio</button>
+            <div class="header-productos">
+                <h2>Nuestros Productos</h2>
+                <div class="filtros">
+                    <button class="btn-ordenar" onclick="ordenarPorCriterio('nombre')">A-Z</button>
+                    <button class="btn-ordenar" onclick="ordenarPorCriterio('precio')">Precio $</button>
+                </div>
             </div>
     `;
 
     cartaProducto += "<div class='contenedor-productos'>";
 
-    array.forEach(fru => {
+    productos.forEach(prod => {
         cartaProducto += `
             <div class="card-producto">
-                <img src="${fru.img_url}" alt="${fru.nombre}">
-                <h3>${fru.nombre}</h3>
-                <p>$ ${fru.precio}</p>
-                <button onclick="agregarACarrito(${fru.id})" class="boton">Agregar al carrito</button>
+                <div class="contenedor-img">
+                    <img src="${IMG_URL}${prod.img_url}" alt="${prod.nombre}">
+                </div>
+                <div class="card-info">
+                    <h3>${prod.nombre}</h3>
+                    <p class="precio">$ ${prod.precio}</p>
+                    <button onclick="agregarACarrito(${prod.id})" class="btn-agregar ancho-total">Agregar al carrito</button>
+                </div>
             </div>
+            
         `;
     });
 
@@ -104,11 +110,11 @@ function agregarACarrito(id) {
 function mostrarCarrito() {
     let cartaCarrito = `
         <div class="titulo-carrito">
-            <h3>Carrito</h3>
+            <h2>Carrito</h2>
         </div>
     `;
 
-    cartaCarrito += "<ul class='contenedor-carrito'>";
+    cartaCarrito += "<div class='contenedor-carrito'>";
 
     let total = 0;
     let totalUnidades = 0;
@@ -119,39 +125,39 @@ function mostrarCarrito() {
         totalUnidades += prod.cantidad;
 
         cartaCarrito += `
-            <li class="bloque-item">
-                <div class="info-producto">
+            <div class="item-carrito">
+                <div class="info-item">
                     <p class="nombre-item"><strong>${prod.nombre}</strong></p>
-                    <p>$${prod.precio} x ${prod.cantidad} = <strong>$${subTotal}</strong></p>
+                    <p class="precio-item">$${prod.precio} x ${prod.cantidad} = <strong>$${subTotal}</strong></p>
                 </div>
                 <div class="acciones-item">
-                    <button class="boton-chico" onclick="restarCantidad(${i})">-</button>
-                    <button class="boton-chico" onclick="sumarCantidad(${i})">+</button>
-                    <button class="boton-eliminar" onclick="eliminarProducto(${i})">Eliminar</button>
+                    <button class="btn-chico" onclick="restarCantidad(${i})">-</button>
+                    <button class="btn-chico" onclick="sumarCantidad(${i})">+</button>
+                    <button class="btn-eliminar" onclick="eliminarProducto(${i})">Eliminar</button>
                 </div>
-            </li>
+            </div>
         `;
 
     });
 
-    cartaCarrito += `</ul>`;
-
     if(carrito.length > 0) {
         cartaCarrito += `
-            <div class="bloque-total">
-                <div class="botones-finales">
-                    <button class="boton-vaciar" onclick="vaciarCarrito()">Vaciar carrito</button>
-                    <button class="boton-finalizar" onclick="finalizarCompra()">Imprimir ticket</button>
-                </div>
+            <div class="contenedor-total">
                 <p class="total-texto">Total: $ ${total}</p>
+                <div class="botones-finales">
+                    <button class="btn-vaciar" onclick="vaciarCarrito()">Vaciar carrito</button>
+                    <button class="btn-finalizar" onclick="finalizarCompra()">Imprimir ticket</button>
+                </div>
             </div>
         `;
     } else {
-        cartaCarrito += `<p class="carrito-vacio">El carrito está vacío</p>`;
+        cartaCarrito += `<div class="carrito-vacio"><p>El carrito esta vacio</p></div>`;
     }
 
+    cartaCarrito += `</div>`;
+
     if(cantidadCarrito) {
-        cantidadCarrito.textContent = `Carrito: ${totalUnidades} Productos`;
+        cantidadCarrito.textContent = `Carrito: ${totalUnidades} productos`;
     }
 
     seccionCarrito.innerHTML = cartaCarrito;
@@ -191,8 +197,6 @@ function vaciarCarrito() {
 }
 
 async function finalizarCompra() {
-    console.table(carrito);
-
     if(carrito.length === 0) {
         return alert("El carrito esta vacio");
     }
@@ -201,12 +205,16 @@ async function finalizarCompra() {
 
     const precioTotal = carrito.reduce((total, prod) => total + (prod.precio * prod.cantidad), 0);
 
-    let idProductos = [];
+    let productosAEnviar = [];
 
-    carrito.forEach(prod => idProductos.push(prod.id));
+    carrito.forEach(prod => {
+        let objeto = { id: prod.id, cantidad: prod.cantidad };
+        
+        productosAEnviar.push(objeto);
+    });
 
     try {
-        const ventaExitosa = await registrarVenta(precioTotal, idProductos, usuarioCliente);
+        const ventaExitosa = await registrarVenta(precioTotal, productosAEnviar, usuarioCliente);
 
         if(ventaExitosa) {
             imprimirTicket(usuarioCliente, precioTotal);
@@ -224,16 +232,16 @@ async function finalizarCompra() {
     }
 }
 
-async function registrarVenta(precioTotal, idProductos, nombreCliente) {
-    const fecha = new Date()
+async function registrarVenta(precioTotal, productosAEnviar, nombreCliente) {
+    const date = new Date()
     .toLocaleString("sv-SE", { hour12: false })  
     .replace("T", " ");
 
     const data = {
-        date: fecha,
-        total_price: precioTotal,
-        user_name: nombreCliente,
-        products: idProductos
+        fecha: date,
+        nombre_usuario: nombreCliente,
+        total: precioTotal,
+        productos: productosAEnviar
     }
 
     try {
@@ -306,7 +314,9 @@ function imprimirTicket(usuarioCliente, precioTotal) {
 barraBusqueda.addEventListener("keyup", filtrarProductos)
 
 function filtrarProductos() {
-    let productosFiltrados = productosDisponibles.filter(prod => prod.nombre.toLowerCase().includes(barraBusqueda.value));
+    let productosFiltrados = productosDisponibles.filter(prod => 
+        prod.nombre.toLowerCase().includes(barraBusqueda.value.toLowerCase())
+    );
 
     mostrarProductos(productosFiltrados);
 }

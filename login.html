@@ -4,22 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="img/favicon.ico" type="image/x-icon">
     <title>Login</title>
 </head>
 <body>
     <header>
-        <nav class="nav-fruteria">
-            <img src="" alt="logo">
-            <p>Tecno Store</p>
+        <nav class="navBar">
+            <div class="contenedor-logo">
+                <img src="img/logo.png" alt="logo">
+                <h3>Tecno Store</h3>
+            </div>
         </nav>
     </header>
     <main>
         <div class="login-container">
-            <h1>Bienvenido!</h1>
+            <h1>¡Bienvenido!</h1>
+            <p class="subtitle">Ingresa a la mejor tienda de tecnología</p>
+
             <form id="form-login">
-                <label for="input-nombre">Ingrese su nombre</label>
-                <input type="text" id="input-nombre" required>
-                <input type="submit" class="boton" value="Ingresar">
+                <div class="form-container">
+                    <label class="label-nombre" for="input-nombre">Ingrese su nombre</label>
+                    <input type="text" id="input-nombre" class="form-input" required>
+                </div>
+                
+                <input type="submit" class="btn-ingresar" value="Ingresar">
             </form>
         </div>
     </main>
