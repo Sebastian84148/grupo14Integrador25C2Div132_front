@@ -101,7 +101,7 @@ main {
     max-width: 480px;
     box-shadow: var(--sombra);
     text-align: center;
-    margin: auto; /* ESTO REEMPLAZA AL body:has */
+    margin: auto;
 }
 
 .login-container h1 {
@@ -329,7 +329,7 @@ label {
     cursor: pointer;
 }
 .btn-ordenar:hover { 
-    background-color: #eef2f6; 
+    background-color: #d4e0ec; 
 }
 
 .btn-chico {
@@ -341,6 +341,10 @@ label {
     font-weight: bold;
 }
 
+.btn-chico:hover {
+    background-color: #d1d5db;
+}
+
 .btn-eliminar {
     background-color: #dc3545;
     color: white;
@@ -348,6 +352,25 @@ label {
     padding: 6px 10px;
     border-radius: 4px;
     cursor: pointer;
+}
+
+.btn-eliminar:hover {
+    background-color: #c42f3e;
+}
+
+.btn-vaciar {
+    background-color: transparent;
+    border: 1px solid #dc3545;
+    color: #dc3545;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-vaciar:hover {
+    background-color: #dc3545;
+    color: white;
+    border-color: #dc3545;
 }
 
 .btn-finalizar {
@@ -360,13 +383,8 @@ label {
     cursor: pointer;
 }
 
-.btn-vaciar {
-    background-color: transparent;
-    border: 1px solid #dc3545;
-    color: #dc3545;
-    padding: 8px 15px;
-    border-radius: 4px;
-    cursor: pointer;
+.btn-finalizar:hover {
+    background-color: #218838;
 }
 
 .ancho-total {
